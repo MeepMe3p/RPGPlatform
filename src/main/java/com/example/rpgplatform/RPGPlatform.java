@@ -45,7 +45,7 @@ public class RPGPlatform extends GameApplication {
             }
         });
     }
-    private  Entity player;
+    private  Entity player, player2;
 
     @Override
     protected void initInput(){
@@ -84,6 +84,18 @@ public class RPGPlatform extends GameApplication {
                 player.getComponent(PlayerComponent.class).stop();
             }
         }, KeyCode.W,VirtualButton.UP);
+        getInput().addAction(new UserAction("BasicAttack") {
+            @Override
+            protected void onAction() {
+                player.getComponent(PlayerComponent.class).basicAttack();
+            }
+
+            @Override
+            protected void onActionEnd() {
+                player.getComponent(PlayerComponent.class).stop();
+
+            }
+        },KeyCode.I);
     }
 
     @Override
@@ -103,8 +115,9 @@ public class RPGPlatform extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new GameFactory());
         player = null;
+        player2 = null;
         nextLevel();
-
+        spawn("player",550,50);
         player = spawn("player", 50,50);
         set("player",player);
         spawn("background");

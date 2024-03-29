@@ -1,5 +1,6 @@
 package com.example.rpgplatform.MagicRoom;
 
+import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.dsl.components.LiftComponent;
 import com.almasb.fxgl.dsl.views.ScrollingBackgroundView;
 import com.almasb.fxgl.entity.Entity;
@@ -25,6 +26,7 @@ import javafx.util.Duration;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 import static com.example.rpgplatform.Components.EntityType.*;
+import static com.example.rpgplatform.Config.WARRIOR_HP;
 
 public class GameFactory implements EntityFactory {
     @Spawns("background")
@@ -49,7 +51,7 @@ public class GameFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
         physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,38), BoundingShape.box(6,17)));
-        physics.setFixtureDef(new FixtureDef().friction(0.2f));
+        physics.setFixtureDef(new FixtureDef().friction(0.1f));
 
         return entityBuilder(data)
                 .type(PLAYER)
@@ -59,6 +61,7 @@ public class GameFactory implements EntityFactory {
                 .with(new CollidableComponent())
                 .with(new IrremovableComponent())
                 .with(new PlayerComponent())
+                .with(new HealthIntComponent(WARRIOR_HP))
                 .build();
     }
 

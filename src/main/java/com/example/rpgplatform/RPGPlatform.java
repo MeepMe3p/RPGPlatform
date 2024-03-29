@@ -52,7 +52,7 @@ public class RPGPlatform extends GameApplication {
         getInput().addAction(new UserAction("Left") {
             @Override
             protected void onAction() {
-                player.getComponent(PlayerComponent.class).left();
+                player.getComponent(PlayerComponent.class).right();
             }
 
             @Override
@@ -64,7 +64,7 @@ public class RPGPlatform extends GameApplication {
         getInput().addAction(new UserAction("Right") {
             @Override
             protected void onAction() {
-                player.getComponent(PlayerComponent.class).right();
+                player.getComponent(PlayerComponent.class).left();
             }
 
             @Override
@@ -103,7 +103,7 @@ public class RPGPlatform extends GameApplication {
     protected void initGame() {
         getGameWorld().addEntityFactory(new GameFactory());
         player = null;
-//        nextLevel();
+        nextLevel();
 
         player = spawn("player", 50,50);
         set("player",player);

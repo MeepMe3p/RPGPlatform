@@ -48,8 +48,8 @@ public class GameFactory implements EntityFactory {
     public Entity newPlayer(SpawnData data){
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
-        physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,38), BoundingShape.box(6,8)));
-        physics.setFixtureDef(new FixtureDef().friction(0.0f));
+        physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,38), BoundingShape.box(6,17)));
+        physics.setFixtureDef(new FixtureDef().friction(0.2f));
 
         return entityBuilder(data)
                 .type(PLAYER)

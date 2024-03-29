@@ -11,7 +11,7 @@ import javafx.util.Duration;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.image;
 
 public class PlayerComponent extends Component {
-    public PhysicsComponent physics;
+    private PhysicsComponent physics;
     private AnimatedTexture texture;
     private AnimationChannel idle, walk;
 
@@ -21,7 +21,7 @@ public class PlayerComponent extends Component {
         Image idle_image = image("WarriorIdleAnim.png");
         Image walk_anim = image("WalkingAnimation.png");
         idle = new AnimationChannel(idle_image,8,64,64, Duration.seconds(1),1,7);
-        walk = new AnimationChannel(walk_anim,6,56,56, Duration.seconds(1),1,5);
+        walk = new AnimationChannel(walk_anim,6,56,56, Duration.seconds(0.66),1,5);
 //        System.out.println(image);
         texture = new AnimatedTexture(idle);
         texture.loop();
@@ -54,11 +54,11 @@ public class PlayerComponent extends Component {
     //FOR MOVEMENT
     public void left(){
         getEntity().setScaleX(1);
-        physics.setVelocityX(-170);
+        physics.setVelocityX(170);
     }
     public void right(){
         getEntity().setScaleX(-1);
-        physics.setVelocityX(170);
+        physics.setVelocityX(-170);
     }
     public void stop(){
         physics.setVelocityX(0);

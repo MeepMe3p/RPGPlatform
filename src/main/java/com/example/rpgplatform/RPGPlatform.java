@@ -117,7 +117,7 @@ public class RPGPlatform extends GameApplication {
         player = null;
         player2 = null;
         nextLevel();
-        spawn("player",550,50);
+        player2 = spawn("player",550,50);
         player = spawn("player", 50,50);
         set("player",player);
         spawn("background");
@@ -161,13 +161,23 @@ public class RPGPlatform extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {
         inc("levelTime",tpf);
-        if(player.getY()> getAppHeight()){
+        if(player.getY()> getAppHeight() ){
             onPlayerDied();
 //            setLevel(2);
         }
+        if(player2.getY() > getAppHeight()){
+            respawnEnemy();
+        }
+
     }
     public void onPlayerDied(){
         setLevel(geti("level"));
+    }
+    public void respawnEnemy(){
+        if(player2 != null){
+            player2.getComponent(PhysicsComponent.class).overwritePosition(new Point2D(550,50));
+            player2.setZIndex(Integer.MAX_VALUE);
+        }
     }
     private void setLevel(int levelNum){
 
@@ -175,9 +185,11 @@ public class RPGPlatform extends GameApplication {
             player.getComponent(PhysicsComponent.class).overwritePosition(new Point2D(50,50));
             player.setZIndex(Integer.MAX_VALUE);
         }
+
         set("levelTime", 0.0);
 //        Level level = setLevelFromMap("/assets/levels/tmx"+levelNum+".tmx");
         Level level = setLevelFromMap("tmx/level1.tmx");
+
 
         var shortestTime = level.getProperties().getDouble("star1time");
 //        var levelTimeData = new LevelEndScene.LevelTimeData(shortestTime*2.4,shortestTime*1.3,shortestTime);

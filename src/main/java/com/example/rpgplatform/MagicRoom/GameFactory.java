@@ -57,6 +57,8 @@ public class GameFactory implements EntityFactory {
                 .type(PLAYER)
                 .bbox(new HitBox(new Point2D(5,5), BoundingShape.circle(20)))
                 .bbox(new HitBox(new Point2D(10,25),BoundingShape.box(10,17)))
+//                .bbox(new HitBox(new Point2D(5,5),BoundingShape.box(50,50)))
+//                .viewWithBBox(new Rectangle(5,5,50,50))
                 .with(physics)
                 .with(new CollidableComponent())
                 .with(new IrremovableComponent())

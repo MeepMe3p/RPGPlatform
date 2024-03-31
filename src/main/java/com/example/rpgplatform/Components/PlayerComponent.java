@@ -19,6 +19,8 @@ public class PlayerComponent extends Component {
     private int jumps = 2;
 
     public PlayerComponent(){
+//        TODO: YOU ARE MY SUNSHINE MY ONLY SUNSHINE change ett so all animations have the same height and width per frame
+//
         Image idle_image = image("WarriorIdleAnim.png");
         Image jump_anim = image("WarriorJump.png");
         Image walk_anim = image("WalkingAnimation.png");

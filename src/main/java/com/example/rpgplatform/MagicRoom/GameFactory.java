@@ -1,5 +1,6 @@
 package com.example.rpgplatform.MagicRoom;
 
+import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.dsl.components.LiftComponent;
 import com.almasb.fxgl.dsl.views.ScrollingBackgroundView;
@@ -20,6 +21,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -51,14 +53,15 @@ public class GameFactory implements EntityFactory {
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
         physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,38), BoundingShape.box(6,17)));
+
         physics.setFixtureDef(new FixtureDef().friction(0.1f));
 
         return entityBuilder(data)
                 .type(PLAYER)
-                .bbox(new HitBox(new Point2D(5,5), BoundingShape.circle(20)))
-                .bbox(new HitBox(new Point2D(10,25),BoundingShape.box(10,17)))
-//                .bbox(new HitBox(new Point2D(5,5),BoundingShape.box(50,50)))
-//                .viewWithBBox(new Rectangle(5,5,50,50))
+
+                .bbox(new HitBox(new Point2D(10,5), BoundingShape.circle(16)))
+                .bbox(new HitBox(new Point2D(10,40),BoundingShape.box(30,15)))
+
                 .with(physics)
                 .with(new CollidableComponent())
                 .with(new IrremovableComponent())

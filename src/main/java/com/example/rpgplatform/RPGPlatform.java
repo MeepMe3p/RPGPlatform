@@ -37,6 +37,7 @@ public class RPGPlatform extends GameApplication {
         gameSettings.setHeight(720);
         gameSettings.setTitle("FUCK THIS SHIT");
         gameSettings.setApplicationMode(ApplicationMode.DEVELOPER);
+        gameSettings.setDeveloperMenuEnabled(true);
         gameSettings.setSceneFactory(new SceneFactory(){
 
             @Override
@@ -171,7 +172,11 @@ public class RPGPlatform extends GameApplication {
 
     }
     public void onPlayerDied(){
-        setLevel(geti("level"));
+//        setLevel(geti("level"));
+        if(player != null){
+            player.getComponent(PhysicsComponent.class).overwritePosition(new Point2D(50,50));
+            player.setZIndex(Integer.MAX_VALUE);
+        }
     }
     public void respawnEnemy(){
         if(player2 != null){

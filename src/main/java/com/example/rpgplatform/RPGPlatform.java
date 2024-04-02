@@ -7,22 +7,22 @@ import com.almasb.fxgl.app.scene.LoadingScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.app.scene.Viewport;
 import com.almasb.fxgl.dsl.FXGL;
-import com.almasb.fxgl.dsl.FXGLForKtKt;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.level.Level;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.input.virtual.VirtualButton;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.example.rpgplatform.Components.PlayerComponent;
+import com.example.rpgplatform.CharactersStuff.WarriorComponent;
+import com.example.rpgplatform.Components.WarriorFactory;
 import com.example.rpgplatform.MagicRoom.GameFactory;
 import com.example.rpgplatform.MagicRoom.PlayerButtonHandler;
 import com.example.rpgplatform.Scenes.MainLoadingScene;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
+import javafx.util.Duration;
 
-
-import java.io.File;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getInput;
@@ -46,59 +46,99 @@ public class RPGPlatform extends GameApplication {
             }
         });
     }
-    private  Entity player, player2;
+    public static Entity player, player2;
+
 
     @Override
     protected void initInput(){
         getInput().addAction(new UserAction("Left") {
             @Override
             protected void onAction() {
-                player.getComponent(PlayerComponent.class).right();
+                player.getComponent(WarriorComponent.class).right();
+//                player.reset()
             }
 
             @Override
             protected void onActionEnd() {
-                player.getComponent(PlayerComponent.class).stop();
+                player.getComponent(WarriorComponent.class).stop();
             }
-        }, KeyCode.A,VirtualButton.LEFT);
+        }, KeyCode.A);
 
         getInput().addAction(new UserAction("Right") {
             @Override
             protected void onAction() {
-                player.getComponent(PlayerComponent.class).left();
+                player.getComponent(WarriorComponent.class).left();
             }
 
             @Override
             protected void onActionEnd() {
-                player.getComponent(PlayerComponent.class).stop();
+                player.getComponent(WarriorComponent.class).stop();
             }
         }, KeyCode.D,VirtualButton.RIGHT);
 
         getInput().addAction(new UserAction("Jump") {
             @Override
             protected void onAction() {
-                player.getComponent(PlayerComponent.class).jump();
+                player.getComponent(WarriorComponent.class).jump();
             }
 
             @Override
             protected void onActionEnd() {
-                player.getComponent(PlayerComponent.class).stop();
+                player.getComponent(WarriorComponent.class).stop();
             }
-        }, KeyCode.W,VirtualButton.UP);
+        }, KeyCode.W);
         getInput().addAction(new UserAction("BasicAttack") {
             @Override
             protected void onAction() {
-                player.getComponent(PlayerComponent.class).basicAttack();
+                //TODO NAA DIRIIII STUDYHON SANI NAKO IDK WTF HOW DIS WORKS PERO FEEL NAKO DI NI MUWORK MAGKADUGAYAN
+                AtomicReference<Entity> a = new AtomicReference<>(new Entity());
+
+                player.getComponent(WarriorComponent.class).basicAttack();
+                runOnce(()->{
+                    System.out.println("spawn");
+                    a.set(spawn("WarriorBasic", player.getX(), player.getY()));
+
+                }, Duration.seconds(0.5));
+
+                runOnce(()->{
+                    System.out.println("despawn");
+                    a.get().removeFromWorld();
+
+                }, Duration.seconds(1));
+
+            }
+
+
+            @Override
+            protected void onActionEnd() {
+                player.getComponent(WarriorComponent.class).stop();
+//                a.removeFromWorld();
+
+//                g
+
+            }
+        },KeyCode.I);
+        getInput().addAction(new UserAction("SkillAttack") {
+            @Override
+            protected void onAction() {
+                player.getComponent(WarriorComponent.class).skill();
+                runOnce(()->{
+//                    a = spawn("WarriorSkill",player.getX(),player.getY());
+                },Duration.seconds(1));
+
             }
 
             @Override
             protected void onActionEnd() {
-                player.getComponent(PlayerComponent.class).stop();
-
+                player.getComponent(WarriorComponent.class).stop();
+//                a.removeFromWorld();
             }
-        },KeyCode.I);
+        }, KeyCode.P);
     }
-
+    public void spawnBasicAttack(){
+        System.out.println("spawned");
+        spawn("WarriorBasic",player.getX(),50);
+    }
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("level", STARTING_LEVEL);
@@ -115,11 +155,14 @@ public class RPGPlatform extends GameApplication {
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new GameFactory());
+        getGameWorld().addEntityFactory(new WarriorFactory());
+
         player = null;
         player2 = null;
         nextLevel();
         player2 = spawn("player",550,50);
         player = spawn("player", 50,50);
+
         set("player",player);
         spawn("background");
 
@@ -144,7 +187,6 @@ public class RPGPlatform extends GameApplication {
     protected void initPhysics() {
         getPhysicsWorld().setGravity(0,760);
         getPhysicsWorld().addCollisionHandler(new PlayerButtonHandler());
-
 //        onCollisionBegin(PLAYER,);
     }
 

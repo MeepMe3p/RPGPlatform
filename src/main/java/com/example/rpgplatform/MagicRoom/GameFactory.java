@@ -1,6 +1,5 @@
 package com.example.rpgplatform.MagicRoom;
 
-import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.components.HealthIntComponent;
 import com.almasb.fxgl.dsl.components.LiftComponent;
 import com.almasb.fxgl.dsl.views.ScrollingBackgroundView;
@@ -16,13 +15,11 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
 import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
-import com.example.rpgplatform.Components.PlayerComponent;
+import com.example.rpgplatform.CharactersStuff.WarriorComponent;
 import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
@@ -52,20 +49,20 @@ public class GameFactory implements EntityFactory {
     public Entity newPlayer(SpawnData data){
         PhysicsComponent physics = new PhysicsComponent();
         physics.setBodyType(BodyType.DYNAMIC);
-        physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,38), BoundingShape.box(6,17)));
+//        physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,38), BoundingShape.box(6,17)));
+        physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,100), BoundingShape.box(6,17)));
 
         physics.setFixtureDef(new FixtureDef().friction(0.1f));
 
         return entityBuilder(data)
                 .type(PLAYER)
 
-                .bbox(new HitBox(new Point2D(10,5), BoundingShape.circle(16)))
-                .bbox(new HitBox(new Point2D(10,40),BoundingShape.box(30,15)))
-
+                .bbox(new HitBox(new Point2D(30,55), BoundingShape.circle(16)))
+                .bbox(new HitBox(new Point2D(30,91),BoundingShape.box(30,19)))
                 .with(physics)
                 .with(new CollidableComponent())
                 .with(new IrremovableComponent())
-                .with(new PlayerComponent())
+                .with(new WarriorComponent())
                 .with(new HealthIntComponent(WARRIOR_HP))
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.example.rpgplatform.Components;
 
+import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
@@ -12,6 +13,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.entityBuilder;
 import static com.example.rpgplatform.Components.AttackType.WARRIOR_BASIC;
@@ -25,7 +27,8 @@ public class WarriorFactory implements EntityFactory {
                 .bbox(new HitBox(new Point2D(45,85), BoundingShape.circle(30)))
                 .viewWithBBox(new Circle(45,85,30,Color.RED))
                 .with(new CollidableComponent(true))
-
+//                ARIGATOOOOOOO GOZAIMASUUUUU NAIJERUUU KUUUN YOU TASUKETE ME SO MATS
+                .with(new ExpireCleanComponent(Duration.seconds(0.3)))
                 .build();
     }
     @Spawns("WarriorSkill")
@@ -34,6 +37,8 @@ public class WarriorFactory implements EntityFactory {
                 .type(WARRIOR_SLASH)
                 .viewWithBBox(new Rectangle(45,85,Color.RED))
                 .with(new ProjectileComponent(new Point2D(1,0),400))
+//              SHEEEEEHSSS NICE KAAA NAIJERUUU KUUUN
+                .with(new ExpireCleanComponent(Duration.seconds(1)))
                 .build();
     }
 }

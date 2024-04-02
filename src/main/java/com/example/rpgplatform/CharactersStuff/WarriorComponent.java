@@ -96,6 +96,7 @@ public class WarriorComponent extends Component {
             return;
         }
         physics.setVelocityY(-500);
+
         skill--;
         isSkill = true;
     }
@@ -116,13 +117,13 @@ public class WarriorComponent extends Component {
     }
     //FOR MOVEMENT
     public void left(){
-        getEntity().setScaleX(1);
-        physics.setVelocityX(170);
+        getEntity().setScaleX(-1);
+        physics.setVelocityX(-170);
 
     }
     public void right(){
-        getEntity().setScaleX(-1);
-        physics.setVelocityX(-170);
+        getEntity().setScaleX(1);
+        physics.setVelocityX(170);
 
     }
     public void stop(){

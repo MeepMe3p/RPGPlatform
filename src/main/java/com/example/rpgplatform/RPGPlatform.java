@@ -48,13 +48,13 @@ public class RPGPlatform extends GameApplication {
     }
     public static Entity player, player2;
 
-
+    Entity a;
     @Override
     protected void initInput(){
         getInput().addAction(new UserAction("Left") {
             @Override
             protected void onAction() {
-                player.getComponent(WarriorComponent.class).right();
+                player.getComponent(WarriorComponent.class).left();
 //                player.reset()
             }
 
@@ -67,7 +67,7 @@ public class RPGPlatform extends GameApplication {
         getInput().addAction(new UserAction("Right") {
             @Override
             protected void onAction() {
-                player.getComponent(WarriorComponent.class).left();
+                player.getComponent(WarriorComponent.class).right();
             }
 
             @Override
@@ -91,20 +91,19 @@ public class RPGPlatform extends GameApplication {
             @Override
             protected void onAction() {
                 //TODO NAA DIRIIII STUDYHON SANI NAKO IDK WTF HOW DIS WORKS PERO FEEL NAKO DI NI MUWORK MAGKADUGAYAN
-                AtomicReference<Entity> a = new AtomicReference<>(new Entity());
 
                 player.getComponent(WarriorComponent.class).basicAttack();
                 runOnce(()->{
                     System.out.println("spawn");
-                    a.set(spawn("WarriorBasic", player.getX(), player.getY()));
+                    a = spawn("WarriorBasic", player.getX(), player.getY());
 
                 }, Duration.seconds(0.5));
 
-                runOnce(()->{
-                    System.out.println("despawn");
-                    a.get().removeFromWorld();
-
-                }, Duration.seconds(2));
+//                runOnce(()->{
+//                    System.out.println("despawn");
+//                    a.removeFromWorld();
+//
+//                }, Duration.seconds(2));
 
             }
 
@@ -122,9 +121,13 @@ public class RPGPlatform extends GameApplication {
             @Override
             protected void onAction() {
                 player.getComponent(WarriorComponent.class).skill();
+
+                player.getComponent(WarriorComponent.class).basicAttack();
                 runOnce(()->{
-//                    a = spawn("WarriorSkill",player.getX(),player.getY());
-                },Duration.seconds(1));
+                    System.out.println("spawn");
+                    a = spawn("WarriorSkill", player.getX(), player.getY());
+
+                }, Duration.seconds(1));
 
             }
 

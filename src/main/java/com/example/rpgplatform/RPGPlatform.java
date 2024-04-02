@@ -104,7 +104,7 @@ public class RPGPlatform extends GameApplication {
                     System.out.println("despawn");
                     a.get().removeFromWorld();
 
-                }, Duration.seconds(1));
+                }, Duration.seconds(2));
 
             }
 

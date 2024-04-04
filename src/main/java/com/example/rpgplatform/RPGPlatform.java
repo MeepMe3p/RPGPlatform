@@ -35,7 +35,7 @@ public class RPGPlatform extends GameApplication {
     protected void initSettings(GameSettings gameSettings) {
         gameSettings.setWidth(1280);
         gameSettings.setHeight(720);
-        gameSettings.setTitle("FUCK THIS SHIT");
+        gameSettings.setTitle("Ew Walay Uyab");
         gameSettings.setApplicationMode(ApplicationMode.DEVELOPER);
         gameSettings.setDeveloperMenuEnabled(true);
         gameSettings.setSceneFactory(new SceneFactory(){
@@ -47,7 +47,10 @@ public class RPGPlatform extends GameApplication {
         });
     }
     public static Entity player, player2;
-
+    // TODO: NGITA UYAB!
+    // ADDED 04/04/2024 @direction && @range
+    private int direction;
+    private final int range = 50;
     Entity a;
     @Override
     protected void initInput(){
@@ -55,6 +58,7 @@ public class RPGPlatform extends GameApplication {
             @Override
             protected void onAction() {
                 player.getComponent(WarriorComponent.class).left();
+                direction = -range;
 //                player.setX(player.getX()+50);
 //                player.reset()
             }
@@ -69,6 +73,7 @@ public class RPGPlatform extends GameApplication {
             @Override
             protected void onAction() {
                 player.getComponent(WarriorComponent.class).right();
+                direction = range;
             }
 
             @Override
@@ -96,7 +101,7 @@ public class RPGPlatform extends GameApplication {
                 player.getComponent(WarriorComponent.class).basicAttack();
                 runOnce(()->{
                     System.out.println("spawn");
-                    a = spawn("WarriorBasic", player.getX(), player.getY());
+                    a = spawn("WarriorBasic", player.getX() + direction, player.getY());
 
                 }, Duration.seconds(0.5));
 

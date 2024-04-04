@@ -55,6 +55,7 @@ public class RPGPlatform extends GameApplication {
             @Override
             protected void onAction() {
                 player.getComponent(WarriorComponent.class).left();
+//                player.setX(player.getX()+50);
 //                player.reset()
             }
 

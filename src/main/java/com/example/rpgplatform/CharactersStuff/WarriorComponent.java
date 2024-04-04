@@ -37,8 +37,8 @@ public class WarriorComponent extends Component {
         Image skill_anim = image("WarriorSpecialAttack.png");
 
         idle = new AnimationChannel(idle_image,12,128,128, Duration.seconds(1),1,11);
-        walk = new AnimationChannel(walk_anim,6,128,128, Duration.seconds(0.66),1,5);
         jump = new AnimationChannel(jump_anim,12,128,128, Duration.seconds(1),1,11);
+        walk = new AnimationChannel(walk_anim,6,128,128, Duration.seconds(1),1,5);
         attack = new AnimationChannel(atk_anim,5,128,128,Duration.seconds(1),1,4);
         skill_atk = new AnimationChannel(skill_anim, 8,128,128,Duration.seconds(1),1,7);
         texture = new AnimatedTexture(idle);
@@ -47,8 +47,7 @@ public class WarriorComponent extends Component {
 
     @Override
     public void onAdded() {
-        entity.getTransformComponent().setScaleOrigin(new Point2D(16,21));
-//        entity.getTransformComponent().setScaleOrigin(new Point2D(0,0));
+        entity.getTransformComponent().setScaleOrigin(new Point2D(48,64));
 
         entity.getViewComponent().addChild(texture);
 
@@ -64,7 +63,6 @@ public class WarriorComponent extends Component {
     public void onUpdate(double tpf) {
         if(isBasicAttacking){
             if(texture.getAnimationChannel() != attack){
-//                System.out.println("attal");
                 texture.loopAnimationChannel(attack);
 
             }
@@ -82,8 +80,10 @@ public class WarriorComponent extends Component {
         } else {
             if (physics.isMovingX()) {
                 if (texture.getAnimationChannel() != walk) {
+
                     texture.loopAnimationChannel(walk);
                 }
+
             } else {
                 if (texture.getAnimationChannel() != idle) {
                     texture.loopAnimationChannel(idle);
@@ -105,30 +105,28 @@ public class WarriorComponent extends Component {
     Entity e;
     public void basicAttack(){
         isBasicAttacking = true;
-//        attackHitbox = new HitBox(new Point2D(45,85), BoundingShape.circle(30));
-//        HitboxComponent hbc = new HitboxComponent(attackHitbox);
-//
-//        runOnce(()->{
-//            System.out.println("a");
-//            entity.addComponent(hbc);
-//            System.out.println("b");
-////            getGameWorld().removeEntity(attackHitbox);
-//        }, Duration.seconds(0.5));
+
     }
     //FOR MOVEMENT
     public void left(){
+
+
         getEntity().setScaleX(-1);
+//        direction = false;
         physics.setVelocityX(-170);
 
     }
     public void right(){
         getEntity().setScaleX(1);
+//        direction = true;
+        System.out.println(getEntity().getAnchoredPosition());
+
+
         physics.setVelocityX(170);
 
     }
     public void stop(){
         physics.setVelocityX(0);
-//        physics.setVelocityY(0);
         isJumping = false;
         isBasicAttacking = false;
         isSkill = false;

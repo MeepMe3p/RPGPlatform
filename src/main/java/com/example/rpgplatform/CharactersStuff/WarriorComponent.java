@@ -64,7 +64,11 @@ public class WarriorComponent extends Component {
         if(isBasicAttacking){
             if(texture.getAnimationChannel() != attack){
                 texture.loopAnimationChannel(attack);
-
+                // ADDED: Fixed when holding the attack button it always "resets"
+                // TODO: Find a better way or @Elijah Pull Kazuha?
+                getGameTimer().runOnceAfter(() -> {
+                    setBasicAttacking(false);
+                }, Duration.seconds(2));
             }
         }
         else if(isSkill){
@@ -105,7 +109,6 @@ public class WarriorComponent extends Component {
     Entity e;
     public void basicAttack(){
         isBasicAttacking = true;
-
     }
     //FOR MOVEMENT
     public void left(){
@@ -142,4 +145,11 @@ public class WarriorComponent extends Component {
         isJumping = true;
     }
 
+    public void setBasicAttacking(boolean basicAttacking) {
+        isBasicAttacking = basicAttacking;
+    }
+
+    public boolean isBasicAttacking() {
+        return isBasicAttacking;
+    }
 }

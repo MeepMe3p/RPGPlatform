@@ -35,7 +35,7 @@ public class RPGPlatform extends GameApplication {
     protected void initSettings(GameSettings gameSettings) {
         gameSettings.setWidth(1280);
         gameSettings.setHeight(720);
-        gameSettings.setTitle("Ew Walay Uyab");
+        gameSettings.setTitle("Flat Former Game");
         gameSettings.setApplicationMode(ApplicationMode.DEVELOPER);
         gameSettings.setDeveloperMenuEnabled(true);
         gameSettings.setSceneFactory(new SceneFactory(){
@@ -47,7 +47,6 @@ public class RPGPlatform extends GameApplication {
         });
     }
     public static Entity player, player2;
-    // TODO: NGITA UYAB!
     // ADDED 04/04/2024 @direction && @range
     private int direction;
     private final int range = 50;
@@ -93,36 +92,25 @@ public class RPGPlatform extends GameApplication {
                 player.getComponent(WarriorComponent.class).stop();
             }
         }, KeyCode.W);
-        getInput().addAction(new UserAction("BasicAttack") {
-            @Override
-            protected void onAction() {
-                //TODO NAA DIRIIII STUDYHON SANI NAKO IDK WTF HOW DIS WORKS PERO FEEL NAKO DI NI MUWORK MAGKADUGAYAN
+            getInput().addAction(new UserAction("BasicAttack") {
+                @Override
+                protected void onAction() {
+                    // ADDED FOR THE CIRCLE TO NOT ALWAYS SPAWN?
+                    // TODO: Pull Kazuha @Elijah Sabay
+                    if(!player.getComponent(WarriorComponent.class).isBasicAttacking()){
+                            player.getComponent(WarriorComponent.class).basicAttack();
+                            runOnce(()->{
+                                System.out.println("spawn");
+                                a = spawn("WarriorBasic", player.getX() + direction, player.getY());
 
-                player.getComponent(WarriorComponent.class).basicAttack();
-                runOnce(()->{
-                    System.out.println("spawn");
-                    a = spawn("WarriorBasic", player.getX() + direction, player.getY());
-
-                }, Duration.seconds(0.5));
-
-//                runOnce(()->{
-//                    System.out.println("despawn");
-//                    a.removeFromWorld();
-//
-//                }, Duration.seconds(2));
-
-            }
-
-
-            @Override
-            protected void onActionEnd() {
-                player.getComponent(WarriorComponent.class).stop();
-//                a.removeFromWorld();
-
-//                g
-
-            }
-        },KeyCode.I);
+                            }, Duration.seconds(0.5));
+                        }
+                    }
+                @Override
+                protected void onActionEnd() {
+                    player.getComponent(WarriorComponent.class).stop();
+                }
+            },KeyCode.I);
         getInput().addAction(new UserAction("SkillAttack") {
             @Override
             protected void onAction() {

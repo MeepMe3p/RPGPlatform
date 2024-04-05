@@ -114,21 +114,14 @@ public class RPGPlatform extends GameApplication {
         getInput().addAction(new UserAction("SkillAttack") {
             @Override
             protected void onAction() {
-                player.getComponent(WarriorComponent.class).skill();
+                player.getComponent(WarriorComponent.class).skill(direction);
 
-                player.getComponent(WarriorComponent.class).basicAttack();
-                runOnce(()->{
-                    System.out.println("spawn");
-                    a = spawn("WarriorSkill", player.getX(), player.getY());
-
-                }, Duration.seconds(1));
 
             }
 
             @Override
             protected void onActionEnd() {
-                player.getComponent(WarriorComponent.class).stop();
-//                a.removeFromWorld();
+                player.getComponent(WarriorComponent.class).stopSkill();
             }
         }, KeyCode.P);
     }

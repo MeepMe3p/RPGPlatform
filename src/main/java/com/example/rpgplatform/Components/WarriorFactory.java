@@ -36,7 +36,7 @@ public class WarriorFactory implements EntityFactory {
         return entityBuilder(data)
                 .type(WARRIOR_SLASH)
                 .viewWithBBox(new Rectangle(45,85,Color.RED))
-                .with(new ProjectileComponent(new Point2D(1,0),400))
+//                .with(new ProjectileComponent(new Point2D(1,0),400))
 //              SHEEEEEHSSS NICE KAAA NAIJERUUU KUUUN
                 .with(new ExpireCleanComponent(Duration.seconds(1)))
                 .build();

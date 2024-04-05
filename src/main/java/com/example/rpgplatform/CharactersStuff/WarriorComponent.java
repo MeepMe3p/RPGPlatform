@@ -1,5 +1,6 @@
 package com.example.rpgplatform.CharactersStuff;
 
+import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
 import com.almasb.fxgl.physics.BoundingShape;
@@ -7,6 +8,7 @@ import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
+import com.almasb.fxgl.time.Timer;
 import com.example.rpgplatform.Components.HitboxComponent;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
@@ -18,6 +20,7 @@ import static com.example.rpgplatform.RPGPlatform.player;
 
 public class WarriorComponent extends Component {
     private PhysicsComponent physics;
+    private Entity b;
     private AnimatedTexture texture;
     private AnimationChannel idle, walk,jump,attack, skill_atk;
     private boolean isJumping, isBasicAttacking, isSkill;
@@ -58,11 +61,25 @@ public class WarriorComponent extends Component {
             }
         });
     }
+    private Timer t = new Timer();
+
+    private double now = t.getNow();
 
     @Override
     public void onUpdate(double tpf) {
-        if(isBasicAttacking){
-            if(texture.getAnimationChannel() != attack){
+//        always sha muincrease ang now so on until it reaches---->>
+        now++;
+//        ->> 5 seconds then maka skill na sha cuz mureset iya skillcount
+        if (now == 500) {
+
+//            System.out.println(now);
+            numSkill = 0;
+//            System.out.println("numskill : " +numSkill);
+            now = 0;
+        }
+
+        if (isBasicAttacking) {
+            if (texture.getAnimationChannel() != attack) {
                 texture.loopAnimationChannel(attack);
                 // ADDED: Fixed when holding the attack button it always "resets"
                 // TODO: Find a better way or @Elijah Pull Kazuha?
@@ -70,13 +87,11 @@ public class WarriorComponent extends Component {
                     setBasicAttacking(false);
                 }, Duration.seconds(2));
             }
-        }
-        else if(isSkill){
-            if(texture.getAnimationChannel() != skill_atk){
+        } else if (isSkill) {
+            if (texture.getAnimationChannel() != skill_atk) {
                 texture.loopAnimationChannel(skill_atk);
             }
-        }
-        else if (isJumping) {
+        } else if (isJumping) {
 //            System.out.println("sadsad");
             if (texture.getAnimationChannel() != jump) {
                 texture.loopAnimationChannel(jump);
@@ -95,18 +110,34 @@ public class WarriorComponent extends Component {
             }
         }
     }
-    public void skill(){
-        if(skill == 0){
+    private int numSkill=0;
+    private int maxSkill=1;
+    public void skill(int direction){
+        //      IF 1 == 1 DI SHA MAKASKILL
+        if (numSkill == maxSkill) {
             return;
         }
-        physics.setVelocityY(-500);
-
-        skill--;
         isSkill = true;
+//      mulayat gamay.. murun rani siya once 0 ang imong numSkill..mazero sha once mu500 ang now..naas update()
+        physics.setVelocityY(-200);
+//        skill--;
+        now = 0;
+//      spawn le thing
+        runOnce(() -> {
+//            System.out.println("spawn");
+            b = spawn("WarriorSkill", player.getX() + direction, player.getY());
+            b.addComponent(new ProjectileComponent(new Point2D(1+direction,0),400));
+            stopSkill();
+        }, Duration.seconds(1));
+//      para ma 1 ang numSkill
+        numSkill++;
+    }
+    public void stopSkill(){
+        isSkill = false;
+
     }
     //FOR ATTACK
-    HitBox attackHitbox;
-    Entity e;
+
     public void basicAttack(){
         isBasicAttacking = true;
     }
@@ -122,7 +153,7 @@ public class WarriorComponent extends Component {
     public void right(){
         getEntity().setScaleX(1);
 //        direction = true;
-        System.out.println(getEntity().getAnchoredPosition());
+//        System.out.println(getEntity().getAnchoredPosition());
 
 
         physics.setVelocityX(170);
@@ -132,7 +163,6 @@ public class WarriorComponent extends Component {
         physics.setVelocityX(0);
         isJumping = false;
         isBasicAttacking = false;
-        isSkill = false;
 
 
     }

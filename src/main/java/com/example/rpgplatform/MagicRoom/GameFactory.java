@@ -10,6 +10,7 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.entity.components.IrremovableComponent;
 import com.almasb.fxgl.input.view.KeyView;
+import com.almasb.fxgl.multiplayer.NetworkComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
@@ -34,6 +35,8 @@ public class GameFactory implements EntityFactory {
                 .view(new ScrollingBackgroundView(texture("background/windrise-background.png").getImage(), getAppWidth(),getAppHeight()))
                 .zIndex(-1)
                 .with(new IrremovableComponent())
+                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
+                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
     @Spawns("platform")
@@ -42,6 +45,8 @@ public class GameFactory implements EntityFactory {
                 .type(PLATFORM)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new PhysicsComponent())
+                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
+                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
 
@@ -64,6 +69,8 @@ public class GameFactory implements EntityFactory {
                 .with(new IrremovableComponent())
                 .with(new WarriorComponent())
                 .with(new HealthIntComponent(WARRIOR_HP))
+                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
+                .with(new NetworkComponent()) // ADDED FOR MULTIPLAYER?
                 .build();
     }
 

@@ -10,13 +10,13 @@ import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.time.Timer;
 import com.example.rpgplatform.Components.HitboxComponent;
+import com.example.rpgplatform.RPGPlatform;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.image;
-import static com.example.rpgplatform.RPGPlatform.player;
 
 public class WarriorComponent extends Component {
     private PhysicsComponent physics;
@@ -125,7 +125,7 @@ public class WarriorComponent extends Component {
 //      spawn le thing
         runOnce(() -> {
 //            System.out.println("spawn");
-            b = spawn("WarriorSkill", player.getX() + direction, player.getY());
+            b = spawn("WarriorSkill", RPGPlatform.getPlayer1().getX() + direction, RPGPlatform.getPlayer1().getY());
             b.addComponent(new ProjectileComponent(new Point2D(1+direction,0),400));
             stopSkill();
         }, Duration.seconds(1));

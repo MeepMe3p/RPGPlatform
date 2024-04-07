@@ -3,13 +3,11 @@ package com.example.rpgplatform.CharactersStuff;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
-import com.almasb.fxgl.physics.BoundingShape;
-import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.time.Timer;
-import com.example.rpgplatform.Components.HitboxComponent;
+//import com.example.rpgplatform.Components.HitboxComponent;
 import com.example.rpgplatform.RPGPlatform;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
@@ -23,7 +21,7 @@ public class WarriorComponent extends Component {
     private Entity b;
     private AnimatedTexture texture;
     private AnimationChannel idle, walk,jump,attack, skill_atk;
-    private boolean isJumping, isBasicAttacking, isSkill;
+    private boolean isJumping, isBasicAttacking, isSkilling;
 
     private int jumps = 2;
     private int skill = 2;
@@ -46,6 +44,7 @@ public class WarriorComponent extends Component {
         skill_atk = new AnimationChannel(skill_anim, 8,128,128,Duration.seconds(1),1,7);
         texture = new AnimatedTexture(idle);
         texture.loop();
+
     }
 
     @Override
@@ -87,9 +86,12 @@ public class WarriorComponent extends Component {
                     setBasicAttacking(false);
                 }, Duration.seconds(2));
             }
-        } else if (isSkill) {
+        } else if (isSkilling) {
             if (texture.getAnimationChannel() != skill_atk) {
                 texture.loopAnimationChannel(skill_atk);
+                getGameTimer().runOnceAfter(() -> {
+                    setSkilling(false);
+                }, Duration.seconds(5));
             }
         } else if (isJumping) {
 //            System.out.println("sadsad");
@@ -112,28 +114,28 @@ public class WarriorComponent extends Component {
     }
     private int numSkill=0;
     private int maxSkill=1;
-    public void skill(int direction){
+    public void skill(Entity player, int direction){
         //      IF 1 == 1 DI SHA MAKASKILL
-        if (numSkill == maxSkill) {
-            return;
-        }
-        isSkill = true;
+//        if (numSkill == maxSkill) {
+//            return;
+//        }
+
 //      mulayat gamay.. murun rani siya once 0 ang imong numSkill..mazero sha once mu500 ang now..naas update()
-        physics.setVelocityY(-200);
 //        skill--;
-        now = 0;
+//        now = 0;
 //      spawn le thing
         runOnce(() -> {
+            physics.setVelocityY(-200);
+            isSkilling = true;
 //            System.out.println("spawn");
             b = spawn("WarriorSkill", RPGPlatform.getPlayer1().getX() + direction, RPGPlatform.getPlayer1().getY());
             b.addComponent(new ProjectileComponent(new Point2D(1+direction,0),400));
-            stopSkill();
         }, Duration.seconds(1));
 //      para ma 1 ang numSkill
         numSkill++;
     }
     public void stopSkill(){
-        isSkill = false;
+        isSkilling = false;
 
     }
     //FOR ATTACK
@@ -182,4 +184,11 @@ public class WarriorComponent extends Component {
     public boolean isBasicAttacking() {
         return isBasicAttacking;
     }
+    public boolean isSkilling(){
+        return isSkilling;
+    }
+    public void setSkilling(boolean skilling){
+        isSkilling = skilling;
+    }
+
 }

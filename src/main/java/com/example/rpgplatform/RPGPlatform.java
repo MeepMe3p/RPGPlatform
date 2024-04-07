@@ -7,23 +7,30 @@ import com.almasb.fxgl.app.scene.LoadingScene;
 import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.app.scene.Viewport;
 import com.almasb.fxgl.core.serialization.Bundle;
+import com.almasb.fxgl.dsl.EntityBuilder;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.level.Level;
+import com.almasb.fxgl.event.EventBus;
+import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.input.virtual.VirtualButton;
 import com.almasb.fxgl.multiplayer.MultiplayerService;
+import com.almasb.fxgl.multiplayer.ReplicationEvent;
 import com.almasb.fxgl.net.Connection;
+import com.almasb.fxgl.net.Server;
 import com.almasb.fxgl.physics.PhysicsComponent;
 import com.example.rpgplatform.CharactersStuff.WarriorComponent;
 import com.example.rpgplatform.Components.WarriorFactory;
 import com.example.rpgplatform.MagicRoom.GameFactory;
 import com.example.rpgplatform.MagicRoom.PlayerButtonHandler;
 import com.example.rpgplatform.Scenes.MainLoadingScene;
+import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
+import java.nio.channels.MulticastChannel;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -36,6 +43,15 @@ public class RPGPlatform extends GameApplication {
 
     // Connects the Client and the Server
     private Connection<Bundle>connection;
+    // ELIJAH CHANGES -------------------------------------------------//
+    /*For the Input - for having a separate input handler(?) for the client
+    * For the EventBus - in my understanding needed ni so that the client will have a separate way of communicating sa server side... for now wa pakoy idea the main purpose of this
+    */
+
+//    private Server<Bundle> server;
+    private Input clientInput;
+    private EventBus clientBus;
+    // ELIJAH CHANGES -------------------------------------------------//
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
@@ -58,7 +74,9 @@ public class RPGPlatform extends GameApplication {
     public static Entity player1, player2;
 
     // ADDED 04/04/2024 @direction && @range
-    private int direction;
+    private int player1_direction;
+    private int player2_direction;
+
     private final int range = 50;
 
     Entity a;
@@ -68,7 +86,7 @@ public class RPGPlatform extends GameApplication {
             @Override
             protected void onAction() {
                 player1.getComponent(WarriorComponent.class).left();
-                direction = -range;
+                player1_direction = -range;
 //                player.setX(player.getX()+50);
 //                player.reset()
             }
@@ -83,7 +101,7 @@ public class RPGPlatform extends GameApplication {
             @Override
             protected void onAction() {
                 player1.getComponent(WarriorComponent.class).right();
-                direction = range;
+                player1_direction = range;
             }
 
             @Override
@@ -112,7 +130,7 @@ public class RPGPlatform extends GameApplication {
                             player1.getComponent(WarriorComponent.class).basicAttack();
                             runOnce(()->{
                                 System.out.println("spawn");
-                                a = spawn("WarriorBasic", player1.getX() + direction, player1.getY());
+                                a = spawn("WarriorBasic", player1.getX() + player1_direction, player1.getY());
 
                             }, Duration.seconds(0.5));
                         }
@@ -125,7 +143,15 @@ public class RPGPlatform extends GameApplication {
         getInput().addAction(new UserAction("SkillAttack") {
             @Override
             protected void onAction() {
-                player1.getComponent(WarriorComponent.class).skill(direction);
+//                player1.getComponent(WarriorComponent.class).skill(player1,player1_direction);
+                if(!player1.getComponent(WarriorComponent.class).isSkilling()){
+                    player1.getComponent(WarriorComponent.class).skill(player1,player2_direction);
+//                    runOnce(()->{
+//                        System.out.println("spawn");
+//                        a = spawn("WarriorBasic", player1.getX() + player1_direction, player1.getY());
+//
+//                    }, Duration.seconds(0.5));
+                }
 
 
             }
@@ -135,11 +161,105 @@ public class RPGPlatform extends GameApplication {
                 player1.getComponent(WarriorComponent.class).stopSkill();
             }
         }, KeyCode.P);
+        // ELIJAH CHANGES -------------------------------------------------//
+        // ELIJAH CHANGES -------------------------------------------------//
+        // ELIJAH CHANGES -------------------------------------------------//
+        // ELIJAH CHANGES -------------------------------------------------//
+
+        clientInput = new Input();
+        clientInput.addAction(new UserAction("Left") {
+            @Override
+            protected void onAction() {
+                player2.getComponent(WarriorComponent.class).left();
+                player2_direction = -range;
+//                player.setX(player.getX()+50);
+//                player.reset()
+            }
+
+            @Override
+            protected void onActionEnd() {
+                player2.getComponent(WarriorComponent.class).stop();
+            }
+        }, KeyCode.A);
+
+        clientInput.addAction(new UserAction("Right") {
+            @Override
+            protected void onAction() {
+                player2.getComponent(WarriorComponent.class).right();
+                player2_direction = range;
+            }
+
+            @Override
+            protected void onActionEnd() {
+                player2.getComponent(WarriorComponent.class).stop();
+            }
+        }, KeyCode.D,VirtualButton.RIGHT);
+
+        clientInput.addAction(new UserAction("Jump") {
+            @Override
+            protected void onAction() {
+                player2.getComponent(WarriorComponent.class).jump();
+            }
+
+            @Override
+            protected void onActionEnd() {
+                player2.getComponent(WarriorComponent.class).stop();
+            }
+        }, KeyCode.W);
+        clientInput.addAction(new UserAction("BasicAttack") {
+            @Override
+            protected void onAction() {
+                // ADDED FOR THE CIRCLE TO NOT ALWAYS SPAWN?
+                // TODO: Pull Kazuha @Elijah Sabay
+                if(!player2.getComponent(WarriorComponent.class).isBasicAttacking()){
+                    player2.getComponent(WarriorComponent.class).basicAttack();
+                    runOnce(()->{
+                        System.out.println("spawn");
+                        a = spawn("WarriorBasic", player2.getX() + player2_direction, player2.getY());
+
+                    }, Duration.seconds(0.5));
+                }
+            }
+            @Override
+            protected void onActionEnd() {
+                player2.getComponent(WarriorComponent.class).stop();
+            }
+        },KeyCode.I);
+        clientInput.addAction(new UserAction("SkillAttack") {
+            @Override
+            protected void onAction() {
+                if(!player2.getComponent(WarriorComponent.class).isSkilling()){
+                    player2.getComponent(WarriorComponent.class).skill(player2,player2_direction);
+//                    runOnce(()->{
+//                        System.out.println("spawn");
+//                        a = spawn("WarriorBasic", player2.getX() + player2_direction, player2.getY());
+//
+//                    }, Duration.seconds(0.5));
+                }
+
+
+            }
+
+            @Override
+            protected void onActionEnd() {
+                player2.getComponent(WarriorComponent.class).stopSkill();
+            }
+        }, KeyCode.P);
+//
+//        clientInput = new Input();
+//        onKeyBuilder(clientInput,KeyCode.W)
+//                .onAction(()->player2.translateY(-5));
+//        onKeyBuilder(clientInput,KeyCode.S)
+//                .onAction(()->player2.translateY(5));
+//        onKeyBuilder(clientInput,KeyCode.A)
+//                .onAction(()-> player2.translateX(-5));
+//        onKeyBuilder(clientInput,KeyCode.A)
+//                .onAction(()-> player2.translateX(-5));
+        // ELIJAH CHANGES -------------------------------------------------//
+
+
     }
-    public void spawnBasicAttack(){
-        System.out.println("spawned");
-        spawn("WarriorBasic", player1.getX(),50);
-    }
+
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("level", STARTING_LEVEL);
@@ -155,11 +275,18 @@ public class RPGPlatform extends GameApplication {
 
     @Override
     protected void initGame() {
+        // ELIJAH CHANGES -------------------------------------------------//
+        clientBus = new EventBus();
+        // ELIJAH CHANGES -------------------------------------------------//
+
         runOnce(()->{
            getDialogService().showConfirmationBox("Are you the host? ", YES -> {
             addEntityFactories();
                if(YES){
                    var server = getNetService().newUDPServer(55555);
+
+
+
                    server.setOnConnected(connection -> {
                        this.connection = connection;
 
@@ -170,17 +297,32 @@ public class RPGPlatform extends GameApplication {
                    });
                    server.startAsync();
                } else {
+
                    var client = getNetService().newUDPClient("localhost", 55555);
+
                    client.setOnConnected(connection -> {
                        this.connection = connection;
 
                        getExecutor().startAsyncFX(()->{
                            OnClient();
+                           // ELIJAH CHANGES -------------------------------------------------//
+
+                           getService(MultiplayerService.class).addInputReplicationSender(connection,getInput());
+                           clientBus.addEventHandler(CustomReplicationEvent.CUSTOM_EVENT,event->{
+                               getNotificationService().pushNotification(event.data + ": "+ event.value);
+                           });
+
+                           getService(MultiplayerService.class).addEventReplicationReceiver(connection,clientBus);
+
+                           // ELIJAH CHANGES -------------------------------------------------//
                        });
 
                    });
                    client.connectAsync();
+                   getInput().setProcessInput(false);
+
                }
+
            });
         }, Duration.seconds(.5));
     }
@@ -201,6 +343,9 @@ public class RPGPlatform extends GameApplication {
         getService(MultiplayerService.class).addEntityReplicationReceiver(connection, getGameWorld());
         getService(MultiplayerService.class).addPropertyReplicationReceiver(connection, getWorldProperties());
 
+
+//        spawnHandler();
+
         if(player2 != null){
             Viewport viewport2 = getGameScene().getViewport();
             viewport2.setBounds(-1500,0,250*7,getAppHeight());
@@ -211,7 +356,7 @@ public class RPGPlatform extends GameApplication {
     private void OnServer() {
         // Setting the UPD Server with port of 55555
         getNetService().newUDPServer(55555);
-
+//        getNetService().newTCPServer(55555);
         spawnHandler();
 
         Viewport viewport1 = getGameScene().getViewport();
@@ -226,17 +371,27 @@ public class RPGPlatform extends GameApplication {
     private void spawnHandler() {
         player1 = null;
         player2 = null;
-        nextLevel();
+        setLevel();
+//        player2 = new EntityBuilder().with(new WarriorComponent()).build();
         player2 = spawn("player",550,50);
         // Spawns the "player" to the client
         getService(MultiplayerService.class).spawn(connection, player2, "player");
 
         player1 = spawn("player", 50,50);
+
         // Spawns the "player" to the client
         getService(MultiplayerService.class).spawn(connection, player1, "player");
 
-        set("player", player1);
-        set("player", player2);
+        // ELIJAH CHANGES -------------------------------------------------//
+        getService(MultiplayerService.class).addInputReplicationReceiver(connection,clientInput);
+        getService(MultiplayerService.class).addPropertyReplicationSender(connection,getWorldProperties());
+        getService(MultiplayerService.class).addEventReplicationSender(connection,clientBus);
+
+//        getService(MultiplayerService.class).dd
+        // ELIJAH CHANGES -------------------------------------------------//
+
+//        set("player", player1);
+//        set("player", player2);
 
         var background = spawn("background");
         // Spawns the "background" to the client
@@ -257,7 +412,7 @@ public class RPGPlatform extends GameApplication {
 //
 //        inc("level", +1);
 
-        setLevel(geti("level"));
+//        setLevel(geti("level"));
     }
 
     @Override
@@ -282,6 +437,14 @@ public class RPGPlatform extends GameApplication {
     @Override
     protected void onUpdate(double tpf) {
         inc("levelTime",tpf);
+
+
+        if (clientInput != null) {
+            clientInput.update(tpf);
+        }
+
+
+
         if(player1 != null && player2 != null){
             if(player1.getY()> getAppHeight() ){
                 onPlayerDied();
@@ -305,7 +468,7 @@ public class RPGPlatform extends GameApplication {
             player2.setZIndex(Integer.MAX_VALUE);
         }
     }
-    private void setLevel(int levelNum){
+    private void setLevel(){
 
         if(player1 != null && player2 != null){
             player1.getComponent(PhysicsComponent.class).overwritePosition(new Point2D(50,50));
@@ -321,7 +484,6 @@ public class RPGPlatform extends GameApplication {
         Level level = setLevelFromMap("tmx/level1.tmx");
 
 
-        var shortestTime = level.getProperties().getDouble("star1time");
 //        var levelTimeData = new LevelEndScene.LevelTimeData(shortestTime*2.4,shortestTime*1.3,shortestTime);
 //        set("levelTimeData",levelTimeData);
     }
@@ -345,4 +507,18 @@ public class RPGPlatform extends GameApplication {
     public static void setPlayer1(Entity player1) {
         RPGPlatform.player1 = player1;
     }
+    // ELIJAH CHANGES -------------------------------------------------//
+    public static class CustomReplicationEvent extends ReplicationEvent{
+        public static final EventType<CustomReplicationEvent> CUSTOM_EVENT = new EventType<>(ReplicationEvent.ANY,"CUSTOM_EVENT");
+        public String data;
+        public double value;
+
+        public CustomReplicationEvent(String data, double value) {
+            super(CUSTOM_EVENT);
+            this.data = data;
+            this.value = value;
+        }
+    }
+    // ELIJAH CHANGES -------------------------------------------------//
+
 }

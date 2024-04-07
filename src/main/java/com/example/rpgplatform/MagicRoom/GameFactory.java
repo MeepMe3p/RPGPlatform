@@ -69,6 +69,7 @@ public class GameFactory implements EntityFactory {
                 .with(new IrremovableComponent())
                 .with(new WarriorComponent())
                 .with(new HealthIntComponent(WARRIOR_HP))
+
                 // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
                 .with(new NetworkComponent()) // ADDED FOR MULTIPLAYER?
                 .build();
@@ -112,17 +113,17 @@ public class GameFactory implements EntityFactory {
     }
 
 
-//    @Spawns("button")
-//    public Entity newButton(SpawnData data){
-//        var keyEntity = getGameWorld().create("keyCode", new SpawnData(data.getX(), data.getY()-50).put("key","E"));
-//        keyEntity.getViewComponent().setOpacity(0);
-//
-//        return entityBuilder(data)
-//                .type(BUTTON)
-//                .viewWithBBox(texture("button.png",20,10))
-//                .with(new CollidableComponent(true))
-//                .with("keyEntity",keyEntity)
-//                .build();
-//    }
+    @Spawns("button")
+    public Entity newButton(SpawnData data){
+        var keyEntity = getGameWorld().create("keyCode", new SpawnData(data.getX(), data.getY()-50).put("key","E"));
+        keyEntity.getViewComponent().setOpacity(0);
+
+        return entityBuilder(data)
+                .type(BUTTON)
+                .viewWithBBox(texture("button.png",20,10))
+                .with(new CollidableComponent(true))
+                .with("keyEntity",keyEntity)
+                .build();
+    }
 
 }

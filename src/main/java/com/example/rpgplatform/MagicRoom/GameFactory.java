@@ -93,6 +93,8 @@ public class GameFactory implements EntityFactory {
                 .view(view)
                 .with(lift)
                 .zIndex(100)
+                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
+                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
     @Spawns("keyPrompt")
@@ -101,6 +103,8 @@ public class GameFactory implements EntityFactory {
                 .type(KEY_PROMPT)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new CollidableComponent(true))
+                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
+                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
     @Spawns("exitSign")
@@ -109,6 +113,8 @@ public class GameFactory implements EntityFactory {
                 .type(EXIT_SIGN)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new CollidableComponent(true))
+                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
+                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
 
@@ -123,6 +129,8 @@ public class GameFactory implements EntityFactory {
                 .viewWithBBox(texture("button.png",20,10))
                 .with(new CollidableComponent(true))
                 .with("keyEntity",keyEntity)
+                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
+                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
 

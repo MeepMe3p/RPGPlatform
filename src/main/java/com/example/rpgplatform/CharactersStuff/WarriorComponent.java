@@ -66,6 +66,7 @@ public class WarriorComponent extends Component {
 
     @Override
     public void onUpdate(double tpf) {
+        super.onUpdate(tpf);
 //        always sha muincrease ang now so on until it reaches---->>
         now++;
 //        ->> 5 seconds then maka skill na sha cuz mureset iya skillcount

@@ -7,6 +7,7 @@ import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.components.CollidableComponent;
+import com.almasb.fxgl.multiplayer.NetworkComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
@@ -29,6 +30,8 @@ public class WarriorFactory implements EntityFactory {
                 .with(new CollidableComponent(true))
 //                ARIGATOOOOOOO GOZAIMASUUUUU NAIJERUUU KUUUN YOU TASUKETE ME SO MATS
                 .with(new ExpireCleanComponent(Duration.seconds(0.3)))
+                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
+                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
     @Spawns("WarriorSkill")
@@ -39,6 +42,8 @@ public class WarriorFactory implements EntityFactory {
 //                .with(new ProjectileComponent(new Point2D(1,0),400))
 //              SHEEEEEHSSS NICE KAAA NAIJERUUU KUUUN
                 .with(new ExpireCleanComponent(Duration.seconds(1)))
+                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
+                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
 }

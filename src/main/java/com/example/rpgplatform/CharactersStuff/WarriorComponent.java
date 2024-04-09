@@ -25,11 +25,14 @@ public class WarriorComponent extends Component {
 
     private int jumps = 2;
     private int skill = 2;
-//    Entity player;
+    Entity player;
 
 
-
-    public WarriorComponent(/*Entity player*/){
+    public WarriorComponent(Entity player){
+        this();
+        this.player = player;
+    }
+    public WarriorComponent(){
 //        TODO: YOU ARE MY SUNSHINE MY ONLY SUNSHINE change ett so all animations have the same height and width per frame
         Image idle_image = image("WarriorIdle.png");
         Image jump_anim = image("WarriorHigh_Jump.png");
@@ -44,7 +47,6 @@ public class WarriorComponent extends Component {
         skill_atk = new AnimationChannel(skill_anim, 8,128,128,Duration.seconds(1),1,7);
         texture = new AnimatedTexture(idle);
         texture.loop();
-
     }
 
     @Override

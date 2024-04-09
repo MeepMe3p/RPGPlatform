@@ -50,9 +50,11 @@ public class RPGPlatform extends GameApplication {
     */
 
 //    private Server<Bundle> server;
-    private Input clientInput;
+    InputHandler clientInput;
+    InputHandler serverInput;
 //    private EventBus clientBus;
     // ELIJAH CHANGES -------------------------------------------------//
+    public static Entity player1, player2;
 
     @Override
     protected void initSettings(GameSettings gameSettings) {
@@ -72,203 +74,6 @@ public class RPGPlatform extends GameApplication {
             }
         });
     }
-    public static Entity player1, player2;
-
-    // ADDED 04/04/2024 @direction && @range
-    private int player1_direction;
-    private int player2_direction;
-
-    private final int range = 50;
-
-    @Override
-    protected void initInput(){
-        getInput().addAction(new UserAction("Left") {
-            @Override
-            protected void onAction() {
-                try{
-                    player1.getComponent(WarriorComponent.class).left();
-                    player1_direction = -range;
-                } catch (IllegalArgumentException e){
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            protected void onActionEnd() {
-                try{
-                player1.getComponent(WarriorComponent.class).stop();
-                } catch (IllegalArgumentException e){
-                    e.printStackTrace();
-                }
-            }
-        }, KeyCode.A);
-
-        getInput().addAction(new UserAction("Right") {
-            @Override
-            protected void onAction() {
-                try{
-                player1.getComponent(WarriorComponent.class).right();
-                player1_direction = range;
-                } catch (IllegalArgumentException e){
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            protected void onActionEnd() {
-                try{
-                player1.getComponent(WarriorComponent.class).stop();
-                } catch (IllegalArgumentException e){
-                    e.printStackTrace();
-                }
-            }
-        }, KeyCode.D,VirtualButton.RIGHT);
-
-        getInput().addAction(new UserAction("Jump") {
-            @Override
-            protected void onAction() {
-                try{
-                player1.getComponent(WarriorComponent.class).jump();
-                } catch (IllegalArgumentException e){
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            protected void onActionEnd() {
-                try{
-                player1.getComponent(WarriorComponent.class).stop();
-                } catch (IllegalArgumentException e){
-                    e.printStackTrace();
-                }
-            }
-        }, KeyCode.W);
-            getInput().addAction(new UserAction("BasicAttack") {
-                @Override
-                protected void onAction() {
-                    // ADDED FOR THE CIRCLE TO NOT ALWAYS SPAWN?
-                    // TODO: Pull Kazuha @Elijah Sabay
-                    try{
-                    if(!player1.getComponent(WarriorComponent.class).isBasicAttacking()){
-                            player1.getComponent(WarriorComponent.class).basicAttack();
-                            runOnce(()->{
-                                System.out.println("spawn");
-                                spawn("WarriorBasic", player1.getX() + player1_direction, player1.getY());
-
-                            }, Duration.seconds(0.5));
-                        }
-                    } catch (IllegalArgumentException e){
-                        e.printStackTrace();
-                    }
-                    }
-                @Override
-                protected void onActionEnd() {
-                    try{
-                    player1.getComponent(WarriorComponent.class).stop();
-                    } catch (IllegalArgumentException e){
-                        e.printStackTrace();
-                    }
-                }
-            },KeyCode.I);
-        getInput().addAction(new UserAction("SkillAttack") {
-            @Override
-            protected void onAction() {
-//                player1.getComponent(WarriorComponent.class).skill(player1,player1_direction);
-                try{
-                if(!player1.getComponent(WarriorComponent.class).isSkilling()){
-                    player1.getComponent(WarriorComponent.class).skill(player1, player1_direction);
-//                    runOnce(()->{
-//                        System.out.println("spawn");
-//                        a = spawn("WarriorBasic", player1.getX() + player1_direction, player1.getY());
-//
-//                    }, Duration.seconds(0.5));
-                }
-                } catch (IllegalArgumentException e){
-                    e.printStackTrace();
-                }
-
-
-            }
-
-            @Override
-            protected void onActionEnd() {
-                try{
-                player1.getComponent(WarriorComponent.class).stopSkill();
-            } catch (IllegalArgumentException e){
-                e.printStackTrace();
-            }
-            }
-        }, KeyCode.P);
-
-        clientInput = new Input();
-        clientInput.addAction(new UserAction("Left") {
-            @Override
-            protected void onAction() {
-                player2.getComponent(WarriorComponent.class).left();
-                player2_direction = -range;
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player2.getComponent(WarriorComponent.class).stop();
-            }
-        }, KeyCode.A);
-
-        clientInput.addAction(new UserAction("Right") {
-            @Override
-            protected void onAction() {
-                player2.getComponent(WarriorComponent.class).right();
-                player2_direction = range;
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player2.getComponent(WarriorComponent.class).stop();
-            }
-        }, KeyCode.D,VirtualButton.RIGHT);
-
-        clientInput.addAction(new UserAction("Jump") {
-            @Override
-            protected void onAction() {
-                player2.getComponent(WarriorComponent.class).jump();
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player2.getComponent(WarriorComponent.class).stop();
-            }
-        }, KeyCode.W);
-        clientInput.addAction(new UserAction("BasicAttack") {
-            @Override
-            protected void onAction() {
-                if(!player2.getComponent(WarriorComponent.class).isBasicAttacking()){
-                    player2.getComponent(WarriorComponent.class).basicAttack();
-                    runOnce(()->{
-                        System.out.println("spawn");
-                        spawn("WarriorBasic", player2.getX() + player2_direction, player2.getY());
-
-                    }, Duration.seconds(0.5));
-                }
-            }
-            @Override
-            protected void onActionEnd() {
-                player2.getComponent(WarriorComponent.class).stop();
-            }
-        },KeyCode.I);
-        clientInput.addAction(new UserAction("SkillAttack") {
-            @Override
-            protected void onAction() {
-                if(!player2.getComponent(WarriorComponent.class).isSkilling()){
-                    player2.getComponent(WarriorComponent.class).skill(player2,player2_direction);
-                }
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player2.getComponent(WarriorComponent.class).stopSkill();
-            }
-        }, KeyCode.P);
-    }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {
@@ -285,8 +90,8 @@ public class RPGPlatform extends GameApplication {
 
     @Override
     protected void initGame() {
+        // TODO: ADD EVENTBUS();
 //        clientBus = new EventBus();
-
         runOnce(()->{
            getDialogService().showConfirmationBox("Are you the host? ", YES -> {
             addEntityFactories();
@@ -294,31 +99,24 @@ public class RPGPlatform extends GameApplication {
             isServer = YES;
                if(isServer){
                    var server = getNetService().newTCPServer(55555);
-
                    server.setOnConnected(connection -> {
                        this.connection = connection;
-
                        getExecutor().startAsyncFX(()->{
                            OnServer();
                        });
-
                    });
                    server.startAsync();
                } else {
-
                    var client = getNetService().newTCPClient("localhost", 55555);
-
                    client.setOnConnected(connection -> {
                        this.connection = connection;
-
                        getExecutor().startAsyncFX(()->{
                            OnClient();
-
                        });
-
                    });
                    client.connectAsync();
                }
+//                getInput().setProcessInput(false);
            });
         }, Duration.seconds(.5));
     }
@@ -336,7 +134,7 @@ public class RPGPlatform extends GameApplication {
         // TODO: Add more .....
     }
     private void OnClient() {
-        player1 = new Entity();
+//        player1 = new Entity();
 
         getService(MultiplayerService.class).addEntityReplicationReceiver(connection, getGameWorld());
         getService(MultiplayerService.class).addPropertyReplicationReceiver(connection, getWorldProperties());
@@ -352,26 +150,41 @@ public class RPGPlatform extends GameApplication {
     }
     private void OnServer() {
         spawnHandler();
+        initInputPlayer();
+        getService(MultiplayerService.class).addPropertyReplicationSender(connection,getWorldProperties());
+        getService(MultiplayerService.class).addInputReplicationReceiver(connection, clientInput.getInput());
         Viewport viewport1 = getGameScene().getViewport();
         viewport1.setBounds(-1500,0,250*7,getAppHeight());
         viewport1.bindToEntity(player1,getAppWidth()/2,getAppHeight()/2);
         viewport1.setLazy(true);
 
-        getService(MultiplayerService.class).addPropertyReplicationSender(connection,getWorldProperties());
-        getService(MultiplayerService.class).addInputReplicationReceiver(connection,clientInput);
 
         // TODO: ADD CONDITION SINCE THIS CAUSES LAG!
         // TODO: MAYBE ADD THREAD?
 //        getService(MultiplayerService.class).addEventReplicationSender(connection,clientBus);
     }
 
+    private void initInputPlayer() {
+        getExecutor().startAsyncFX(()->{
+            clientInput = new InputHandler(player2, new Input());
+            Thread clientInputThread = new Thread(clientInput);
+            clientInputThread.start();
+            serverInput = new InputHandler(player1, getInput());
+            Thread serverInputThread = new Thread(serverInput);
+            serverInputThread.start();
+        });
+    }
+
     /** For every "Spawn", client should also have it, provided that @GameFactory the entity contains a ".with(new NetworkComponent())" **/
     private void spawnHandler() {
+//        player1 = null;
+//        player2 = null;
         setLevel();
         player2 = spawn("player",550,50);
         getService(MultiplayerService.class).spawn(connection, player2, "player");
         player1 = spawn("player", 50,50);
         getService(MultiplayerService.class).spawn(connection, player1, "player");
+
         var background = spawn("background");
         getService(MultiplayerService.class).spawn(connection, background, "background");
         // TODO: Add more .....
@@ -398,8 +211,12 @@ public class RPGPlatform extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        if (isServer || clientInput != null) {
-            clientInput.update(tpf);
+        if (isServer && clientInput != null && clientInput.getInput() != null) {
+            try{
+                clientInput.getInput().update(tpf);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
         if(player1 != null && player2 != null){
             if(player1.getY()> getAppHeight() ){
@@ -448,6 +265,9 @@ public class RPGPlatform extends GameApplication {
     public static Entity getPlayer1() {
         return player1;
     }
+
+
+    // TODO: ADD EVENTBUS();
 //    // ELIJAH CHANGES -------------------------------------------------//
 //    public static class CustomReplicationEvent extends ReplicationEvent{
 //        public static final EventType<CustomReplicationEvent> CUSTOM_EVENT = new EventType<>(ReplicationEvent.ANY,"CUSTOM_EVENT");

@@ -3,12 +3,15 @@ package com.example.rpgplatform.CharactersStuff;
 import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.Component;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
+import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
+import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.almasb.fxgl.texture.AnimatedTexture;
 import com.almasb.fxgl.texture.AnimationChannel;
 import com.almasb.fxgl.time.Timer;
 //import com.example.rpgplatform.Components.HitboxComponent;
-import com.example.rpgplatform.RPGPlatform;
 import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.util.Duration;
@@ -17,23 +20,26 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.image;
 
 public class WarriorComponent extends Component {
-    private PhysicsComponent physics;
-    private Entity b;
+    private final PhysicsComponent physics;
+    private Entity warriorSkill;
     private AnimatedTexture texture;
     private AnimationChannel idle, walk,jump,attack, skill_atk;
     private boolean isJumping, isBasicAttacking, isSkilling;
 
     private int jumps = 2;
     private int skill = 2;
-    Entity player;
+    String username;
 
-
-    public WarriorComponent(Entity player){
+    public WarriorComponent(String username){
         this();
-        this.player = player;
+        this.username = username; // TODO: USERNAME USAGE
     }
     public WarriorComponent(){
-//        TODO: YOU ARE MY SUNSHINE MY ONLY SUNSHINE change ett so all animations have the same height and width per frame
+        physics = new PhysicsComponent();
+        physics.setBodyType(BodyType.DYNAMIC);
+        physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,100), BoundingShape.box(6,17)));
+        physics.setFixtureDef(new FixtureDef().friction(0.1f));
+
         Image idle_image = image("WarriorIdle.png");
         Image jump_anim = image("WarriorHigh_Jump.png");
         Image walk_anim = image("WarriorWalk.png");
@@ -52,8 +58,8 @@ public class WarriorComponent extends Component {
     @Override
     public void onAdded() {
         entity.getTransformComponent().setScaleOrigin(new Point2D(48,64));
-
         entity.getViewComponent().addChild(texture);
+        entity.addComponent(physics);
 
         physics.onGroundProperty().addListener((obs, old, isOnGround)->{
             if(isOnGround){
@@ -69,14 +75,9 @@ public class WarriorComponent extends Component {
     @Override
     public void onUpdate(double tpf) {
         super.onUpdate(tpf);
-//        always sha muincrease ang now so on until it reaches---->>
         now++;
-//        ->> 5 seconds then maka skill na sha cuz mureset iya skillcount
         if (now == 500) {
-
-//            System.out.println(now);
             numSkill = 0;
-//            System.out.println("numskill : " +numSkill);
             now = 0;
         }
 
@@ -84,7 +85,6 @@ public class WarriorComponent extends Component {
             if (texture.getAnimationChannel() != attack) {
                 texture.loopAnimationChannel(attack);
                 // ADDED: Fixed when holding the attack button it always "resets"
-                // TODO: Find a better way or @Elijah Pull Kazuha?
                 getGameTimer().runOnceAfter(() -> {
                     setBasicAttacking(false);
                 }, Duration.seconds(2));
@@ -115,26 +115,15 @@ public class WarriorComponent extends Component {
             }
         }
     }
-    private int numSkill=0;
-    private int maxSkill=1;
+    private int numSkill = 0;
+    private final int maxSkill = 1;
     public void skill(Entity player, int direction){
-        //      IF 1 == 1 DI SHA MAKASKILL
-//        if (numSkill == maxSkill) {
-//            return;
-//        }
-
-//      mulayat gamay.. murun rani siya once 0 ang imong numSkill..mazero sha once mu500 ang now..naas update()
-//        skill--;
-//        now = 0;
-//      spawn le thing
         runOnce(() -> {
             physics.setVelocityY(-200);
             isSkilling = true;
-//            System.out.println("spawn");
-            b = spawn("WarriorSkill", RPGPlatform.getPlayer1().getX() + direction, RPGPlatform.getPlayer1().getY());
-            b.addComponent(new ProjectileComponent(new Point2D(1+direction,0),400));
+            warriorSkill = spawn("WarriorSkill", getEntity().getX() + direction, getEntity().getY());
+            warriorSkill.addComponent(new ProjectileComponent(new Point2D(1+direction,0),400));
         }, Duration.seconds(1));
-//      para ma 1 ang numSkill
         numSkill++;
     }
     public void stopSkill(){
@@ -194,4 +183,11 @@ public class WarriorComponent extends Component {
         isSkilling = skilling;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public PhysicsComponent getPhysics() {
+        return physics;
+    }
 }

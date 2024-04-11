@@ -1,7 +1,6 @@
 package com.example.rpgplatform.Components;
 
 import com.almasb.fxgl.dsl.components.ExpireCleanComponent;
-import com.almasb.fxgl.dsl.components.ProjectileComponent;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;

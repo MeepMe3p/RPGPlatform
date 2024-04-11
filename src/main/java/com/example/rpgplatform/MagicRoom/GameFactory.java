@@ -10,12 +10,9 @@ import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.entity.components.IrremovableComponent;
 import com.almasb.fxgl.input.view.KeyView;
-import com.almasb.fxgl.multiplayer.NetworkComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.physics.PhysicsComponent;
-import com.almasb.fxgl.physics.box2d.dynamics.BodyType;
-import com.almasb.fxgl.physics.box2d.dynamics.FixtureDef;
 import com.example.rpgplatform.CharactersStuff.WarriorComponent;
 import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
@@ -35,8 +32,6 @@ public class GameFactory implements EntityFactory {
                 .view(new ScrollingBackgroundView(texture("background/windrise-background.png").getImage(), getAppWidth(),getAppHeight()))
                 .zIndex(-1)
                 .with(new IrremovableComponent())
-                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
-                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
     @Spawns("platform")
@@ -45,33 +40,20 @@ public class GameFactory implements EntityFactory {
                 .type(PLATFORM)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new PhysicsComponent())
-                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
-                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
 
     @Spawns("player")
     public Entity newPlayer(SpawnData data){
-        PhysicsComponent physics = new PhysicsComponent();
-        physics.setBodyType(BodyType.DYNAMIC);
-//        physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,38), BoundingShape.box(6,17)));
-        physics.addGroundSensor(new HitBox("GROUND_SENSOR",new Point2D(16,100), BoundingShape.box(6,17)));
-
-        physics.setFixtureDef(new FixtureDef().friction(0.1f));
-
         return entityBuilder(data)
                 .type(PLAYER)
-
                 .bbox(new HitBox(new Point2D(30,55), BoundingShape.circle(16)))
                 .bbox(new HitBox(new Point2D(30,91),BoundingShape.box(30,19)))
-                .with(physics)
                 .with(new CollidableComponent())
-                .with(new IrremovableComponent())
+//                .with(new IrremovableComponent())
+                // TODO: Study this and understand the "why?" https://github.com/AlmasB/FXGL/issues/373
                 .with(new WarriorComponent())
                 .with(new HealthIntComponent(WARRIOR_HP))
-
-                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
-                .with(new NetworkComponent()) // ADDED FOR MULTIPLAYER?
                 .build();
     }
 
@@ -93,8 +75,6 @@ public class GameFactory implements EntityFactory {
                 .view(view)
                 .with(lift)
                 .zIndex(100)
-                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
-                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
     @Spawns("keyPrompt")
@@ -103,8 +83,6 @@ public class GameFactory implements EntityFactory {
                 .type(KEY_PROMPT)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new CollidableComponent(true))
-                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
-                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
     @Spawns("exitSign")
@@ -113,8 +91,6 @@ public class GameFactory implements EntityFactory {
                 .type(EXIT_SIGN)
                 .bbox(new HitBox(BoundingShape.box(data.<Integer>get("width"), data.<Integer>get("height"))))
                 .with(new CollidableComponent(true))
-                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
-                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
 
@@ -129,8 +105,6 @@ public class GameFactory implements EntityFactory {
                 .viewWithBBox(texture("button.png",20,10))
                 .with(new CollidableComponent(true))
                 .with("keyEntity",keyEntity)
-                // TODO: ADD MORE .with(new NetworkComponent()) (?) ASIDE FROM THIS ENTITY
-                .with(new NetworkComponent())  // ADDED FOR MULTIPLAYER?
                 .build();
     }
 

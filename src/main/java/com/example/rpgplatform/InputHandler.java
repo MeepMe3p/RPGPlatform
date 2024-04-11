@@ -5,6 +5,8 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.input.virtual.VirtualButton;
 import com.example.rpgplatform.CharactersStuff.WarriorComponent;
+import com.example.rpgplatform.Network.GameClient;
+import com.example.rpgplatform.Network.packets.Packet02Move;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
@@ -16,9 +18,19 @@ public class InputHandler implements Runnable{
     Entity player;
     int playerDirection;
     private final int range = 50;
-    InputHandler(Entity player, Input input){
+    boolean isMultiplayer;
+    GameClient socketClient;
+    WarriorComponent warriorComponent;
+
+    public InputHandler(Entity player, Input input,
+                        boolean isMultiplayer,
+                        GameClient socketClient,
+                        WarriorComponent warriorComponent) {
         this.input = input;
         this.player = player;
+        this.isMultiplayer = isMultiplayer;
+        this.socketClient = socketClient;
+        this.warriorComponent = warriorComponent;
     }
 
     public Input getInput() {
@@ -33,6 +45,14 @@ public class InputHandler implements Runnable{
                 try{
                     player.getComponent(WarriorComponent.class).left();
                     playerDirection = -range;
+                    if (isMultiplayer) {
+                        // TODO: UNDERSTAND THE STATE!
+//                        Packet02Move packet = new Packet02Move(warriorComponent.getUsername(),
+//                                warriorComponent.getPhysics().getVelocityX(), warriorComponent.getPhysics().getVelocityY(),
+//                                warriorComponent.getState().getValue(),
+//                                player.getX(), player.getY());
+//                        packet.writeData(socketClient);
+                    }
                 } catch (Exception e){
                     e.printStackTrace();
                 }
